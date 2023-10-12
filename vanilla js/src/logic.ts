@@ -1,21 +1,15 @@
-const canvas = document.getElementById('canvas')
-const scoreUI = document.getElementById('score')
-const ctx = canvas.getContext("2d");
+export const SIZE_GRID = 50;
 
-canvas.width = 500;
-canvas.height = 1000;
+const MAX_VELOCITY = 500
+const MIN_VELOCITY = 150
 
-const SIZE_GRID = 50;
-
-const HEIGHT_GRID = canvas.height / SIZE_GRID;
-const WIDTH_GRID = canvas.width / SIZE_GRID;
-
-
-var grid = []
-var score = 0
+var HEIGHT_GRID = 0;
+var WIDTH_GRID = 0;
+var grid: Array<Array<number>> = []
+var score: number = 0
 var pieces = [
     {
-        x: Math.round(WIDTH_GRID / 2),
+        x: 0,
         y: 0,
         shape: [
             [1, 1],
@@ -23,7 +17,7 @@ var pieces = [
         ]
     },
     {
-        x: Math.round(WIDTH_GRID / 2),
+        x: 0,
         y: 0,
         shape: [
             [1, 0, 0],
@@ -31,7 +25,7 @@ var pieces = [
         ]
     },
     {
-        x: Math.round(WIDTH_GRID / 2),
+        x: 0,
         y: 0,
         shape: [
             [0, 0, 1],
@@ -39,7 +33,7 @@ var pieces = [
         ]
     },
     {
-        x: Math.round(WIDTH_GRID / 2),
+        x: 0,
         y: 0,
         shape: [
             [1, 0],
@@ -48,7 +42,7 @@ var pieces = [
         ]
     },
     {
-        x: Math.round(WIDTH_GRID / 2),
+        x: 0,
         y: 0,
         shape: [
             [0, 1],
@@ -57,7 +51,7 @@ var pieces = [
         ]
     },
     {
-        x: Math.round(WIDTH_GRID / 2),
+        x: 0,
         y: 0,
         shape: [
             [1],
@@ -67,7 +61,7 @@ var pieces = [
         ]
     },
     {
-        x: Math.round(WIDTH_GRID / 2),
+        x: 0,
         y: 0,
         shape: [
             [1, 1],
@@ -76,7 +70,7 @@ var pieces = [
         ]
     },
     {
-        x: Math.round(WIDTH_GRID / 2),
+        x: 0,
         y: 0,
         shape: [
             [1, 0],
@@ -84,11 +78,27 @@ var pieces = [
             [1, 0],
         ]
     }
-]
+] as Array<Shape>
 
-var currentShape = null
+interface Shape {
+    x: number;
+    y: number;
+    shape: Array<Array<number>>;
 
-function drawGrid() {
+}
+
+var currentShape: Shape | null = null
+
+export function getVelocity(): number {
+    return (MAX_VELOCITY - score < MIN_VELOCITY) ? MIN_VELOCITY : MAX_VELOCITY - score
+}
+
+function drawGrid(ctx: CanvasRenderingContext2D) {
+    if (ctx === null) {
+        // TODO: add error types and report to logs service
+        throw new Error("Not found context");
+    }
+
     ctx.strokeStyle = "grey";
     ctx.lineWidth = 1;
 
@@ -107,15 +117,21 @@ function drawGrid() {
     }
 }
 
-function drawRects() {
+function drawRects(ctx: CanvasRenderingContext2D) {
+    if (ctx === null) {
+        // TODO: add error types and report to logs service
+        throw new Error("Not found context");
+    }
+
+    ctx.clearRect(0, 0, WIDTH_GRID * SIZE_GRID, HEIGHT_GRID * SIZE_GRID);
+
     for (let i = 0; i < grid.length; i++) {
         for (let j = 0; j < grid[i].length; j++) {
-            if (grid[i][j] === 1) {
-                ctx.fillStyle = "yellow";
-            } else {
-                ctx.fillStyle = "black";
+            if (grid[i][j] === 0) {
+                continue
             }
 
+            ctx.fillStyle = "yellow";
             ctx.beginPath();
             ctx.rect(j * SIZE_GRID, i * SIZE_GRID, SIZE_GRID, SIZE_GRID);
             ctx.fill();
@@ -124,7 +140,17 @@ function drawRects() {
     }
 }
 
-function drawPiece(piece) {
+function drawPiece(ctx: CanvasRenderingContext2D, piece: Shape | null) {
+    if (ctx === null) {
+        // TODO: add error types and report to logs service
+        throw new Error("Not found context");
+    }
+
+    if (piece === null) {
+        // TODO: add error types and report to logs service
+        throw new Error("Not found piece");
+    }
+
     ctx.fillStyle = "red";
 
     for (let i = 0; i < piece.shape.length; i++) {
@@ -150,9 +176,13 @@ function initGrid() {
 }
 
 function checkCollition() {
+    if (currentShape === null) {
+        // TODO: add error types and report to logs service
+        throw new Error("Not found currentShape");
+    }
+
     for (let y = 0; y < currentShape.shape.length; y++) {
         for (let x = 0; x < currentShape.shape[y].length; x++) {
-            const element = currentShape.shape[y][x];
             if (currentShape.shape[y][x] === 1 && (grid[currentShape.y + y] === undefined || grid[currentShape.y + y][currentShape.x + x] === undefined || grid[currentShape.y + y][currentShape.x + x] === 1)) {
                 return true
             }
@@ -165,6 +195,11 @@ function checkCollition() {
 }
 
 function solidity() {
+    if (currentShape === null) {
+        // TODO: add error types and report to logs service
+        throw new Error("Not found currentShape");
+    }
+
     let posX = currentShape.x
     let posY = currentShape.y
 
@@ -178,77 +213,84 @@ function solidity() {
     }
 }
 
-function getRandomNumber(x) {
-    const randomNumber = Math.random();
-    const randomValue = Math.floor(randomNumber * x);
+function getRandomnumber(x: number) {
+    const randomnumber = Math.random();
+    const randomValue = Math.floor(randomnumber * x);
 
     return randomValue;
 }
 
-function deleteCompleted() {
+function deleteCompleted(scoreUI: HTMLSpanElement) {
     for (let y = 0; y < grid.length; y++) {
-        let allFill = true;
+        let allRowFill = true;
         for (let x = 0; x < grid[y].length; x++) {
             if (grid[y][x] === 1) {
                 continue
             }
 
-            allFill = false;
+            allRowFill = false;
+
             break
         }
 
-        if (allFill) {
-            grid.splice(y, 1);
-            grid.unshift(new Array(WIDTH_GRID).fill(0))
-            score += WIDTH_GRID;
-            scoreUI.textContent = score;
+        if (!allRowFill) {
+            continue
+
         }
+
+        grid.splice(y, 1);
+        grid.unshift(new Array(WIDTH_GRID).fill(0))
+        score += WIDTH_GRID;
+        if (scoreUI === null) {
+            // TODO: add error types and report to logs service
+            throw new Error("Not found scoreUI");
+        }
+
+        scoreUI.textContent = score.toString();
     }
 }
 
-function update() {
+export function update(ctx: CanvasRenderingContext2D, scoreUI: HTMLSpanElement) {
     if (currentShape === null) {
-        currentShape = { ...pieces[getRandomNumber(pieces.length)] }
+        currentShape = { ...pieces[getRandomnumber(pieces.length)] }
+        currentShape.x = Math.round(WIDTH_GRID / 2)
     } else {
         currentShape.y++
         if (checkCollition()) {
             currentShape.y--
             solidity()
-            currentShape = { ...pieces[getRandomNumber(pieces.length)] }
-            deleteCompleted();
+            currentShape = { ...pieces[getRandomnumber(pieces.length)] }
+            currentShape.x = Math.round(WIDTH_GRID / 2)
+            deleteCompleted(scoreUI);
         }
     }
 
     if (checkCollition()) {
         alert("Game over");
+
+
         grid = [];
         score = 0;
-        scoreUI.textContent = score;
+        if (scoreUI === null) {
+            // TODO: add error types and report to logs service
+            throw new Error("Not found scoreUI");
+        }
+        scoreUI.textContent = score.toString();
         initGrid();
     }
 
-    drawRects()
-    drawGrid()
-    drawPiece(currentShape)
-
-    const time = 500 - score
-    if (time < 150) {
-        time = 150
-    }
-
-    requestAnimationFrame(() => {
-        setTimeout(() => {
-            update()
-        }, time);
-    });
+    updateUI(ctx)
 }
 
-initGrid()
-drawRects()
-drawGrid()
-update()
+export function updateUI(ctx: CanvasRenderingContext2D) {
+    drawRects(ctx)
+    drawGrid(ctx)
+    drawPiece(ctx, currentShape)
+}
 
-function rotate(piece) {
+
+
+function rotate(piece: Shape) {
     let shape = piece.shape
     let rotateShape = new Array(shape[0].length)
 
@@ -266,14 +308,17 @@ function rotate(piece) {
 }
 
 document.addEventListener('keydown', function (event) {
+    if (currentShape === null) {
+        // TODO: add error types and report to logs service
+        throw new Error("Not found scoreUI");
+    }
+
     if (event.key === 'ArrowLeft') {
         currentShape.x--
         if (checkCollition()) {
             currentShape.x++
         } else {
-            drawRects()
-            drawGrid()
-            drawPiece(currentShape)
+            window.dispatchEvent(new Event('update'));
         }
     } else if (event.key === 'ArrowUp') {
         let shapeWithoutRotation = currentShape.shape
@@ -281,27 +326,21 @@ document.addEventListener('keydown', function (event) {
         if (checkCollition()) {
             currentShape.shape = shapeWithoutRotation
         } else {
-            drawRects()
-            drawGrid()
-            drawPiece(currentShape)
+            window.dispatchEvent(new Event('update'));
         }
     } else if (event.key === 'ArrowRight') {
         currentShape.x++
         if (checkCollition()) {
             currentShape.x--
         } else {
-            drawRects()
-            drawGrid()
-            drawPiece(currentShape)
+            window.dispatchEvent(new Event('update'));
         }
     } else if (event.key === 'ArrowDown') {
         currentShape.y++
         if (checkCollition()) {
             currentShape.y--
         } else {
-            drawRects()
-            drawGrid()
-            drawPiece(currentShape)
+            window.dispatchEvent(new Event('update'));
         }
     } else if (event.key === ' ') {
         for (let y = currentShape.y; y < grid.length; y++) {
@@ -311,8 +350,21 @@ document.addEventListener('keydown', function (event) {
             }
         }
 
-        drawRects()
-        drawGrid()
-        drawPiece(currentShape)
+        window.dispatchEvent(new Event('update'));
     }
 });
+
+
+
+
+
+export function setup(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
+    canvas.width = 500;
+    canvas.height = 1000;
+    HEIGHT_GRID = canvas.height / SIZE_GRID;
+    WIDTH_GRID = canvas.width / SIZE_GRID;
+
+    initGrid()
+    drawRects(ctx)
+    drawGrid(ctx)
+}
