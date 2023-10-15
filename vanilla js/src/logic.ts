@@ -172,6 +172,8 @@ function drawPiece(ctx: CanvasRenderingContext2D, piece: Shape | null) {
 }
 
 function initGrid() {
+	grid = [];
+
 	for (let i = 0; i < HEIGHT_GRID; i++) {
 		const row = new Array(WIDTH_GRID).fill(0);
 		grid.push(row);
@@ -271,7 +273,6 @@ export function update(ctx: CanvasRenderingContext2D, scoreUI: HTMLSpanElement) 
 	if (checkCollition()) {
 		alert('Game over');
 
-
 		grid = [];
 		score = 0;
 		if (scoreUI === null) {
@@ -287,8 +288,8 @@ export function update(ctx: CanvasRenderingContext2D, scoreUI: HTMLSpanElement) 
 
 export function updateUI(ctx: CanvasRenderingContext2D) {
 	drawRects(ctx);
-	drawGrid(ctx);
 	drawPiece(ctx, currentShape);
+	drawGrid(ctx);
 }
 
 function rotate(piece: Shape) {

@@ -8,29 +8,71 @@ beforeEach(() => {
 	canvas = document.createElement('canvas') as HTMLCanvasElement;
 	ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 	scoreElement = document.createElement('span') as HTMLSpanElement;
-
-	//setup(ctx, canvas)
 });
 
 describe('Catch the user interactions', () => {
-	test('press key arrow top', () => {
-		expect(5).toBe(5);
+	setup(ctx, canvas);
+	update(ctx, scoreElement);
+
+	test('press key arrow up', () => {
+		const eventSpy = jest.spyOn(window, 'dispatchEvent');
+
+		const event = new KeyboardEvent('keydown', {'key': 'ArrowUp'});
+		document.dispatchEvent(event);
+
+		expect(eventSpy).toBeCalledWith(new Event('update'));
+
+		eventSpy.mockRestore();
 	});
 
 	test('press key arrow down', () => {
-		expect(5).toBe(5);
+		const eventSpy = jest.spyOn(window, 'dispatchEvent');
+
+		const event = new KeyboardEvent('keydown', {'key': 'ArrowDown'});
+		document.dispatchEvent(event);
+
+		expect(eventSpy).toBeCalledWith(new Event('update'));
+
+		eventSpy.mockRestore();
 	});
 
 	test('press key arrow left', () => {
-		expect(5).toBe(5);
+		const eventSpy = jest.spyOn(window, 'dispatchEvent');
+
+		const event = new KeyboardEvent('keydown', {'key': 'ArrowLeft'});
+		document.dispatchEvent(event);
+
+		expect(eventSpy).toBeCalledWith(new Event('update'));
+
+		eventSpy.mockRestore();
 	});
 
 	test('press key arrow right', () => {
-		expect(5).toBe(5);
+		const eventSpy = jest.spyOn(window, 'dispatchEvent');
+
+		const event = new KeyboardEvent('keydown', {'key': 'ArrowRight'});
+		document.dispatchEvent(event);
+
+		expect(eventSpy).toBeCalledWith(new Event('update'));
+
+		eventSpy.mockRestore();
 	});
 
 	test('press key space', () => {
-		expect(5).toBe(5);
+		const eventSpy = jest.spyOn(window, 'dispatchEvent');
+
+		const event = new KeyboardEvent('keydown', {'key': ' '});
+		document.dispatchEvent(event);
+
+		expect(eventSpy).toBeCalledWith(new Event('update'));
+
+		eventSpy.mockRestore();
+
+		update(ctx, scoreElement);
+
+		//draw two shapes
+		expect(ctx.rect).toBeCalledTimes(8);
+
 	});
 });
 
@@ -53,7 +95,7 @@ describe('Validate the game events', () => {
 	test('load shape', () => {
 		update(ctx, scoreElement);
 
-		//draw red rec
+		//draw shape rec
 		expect(ctx.rect).toBeCalled();
 		expect(ctx.fillStyle).toBe(SHAPE_COLOR);
 	});
