@@ -28,11 +28,24 @@ body {
 
 h3 {
   margin: 20px;
-  
 }
 
 #canvas {
   border: 2px solid red;
   width: 400px;
   height: 800px;
+}
+
+button {
+  margin: 24px;
+  padding: 12px;
+  background: black;
+  color: yellow;
+  border: 2px solid yellow;
+  cursor: pointer;
+}
+
+button:disabled{
+  color: grey;
+  border: 2px solid grey;
 }

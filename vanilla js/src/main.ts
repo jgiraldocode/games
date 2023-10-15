@@ -1,23 +1,82 @@
 import './style.css';
-import { setup, update, updateUI, getVelocity } from './logic.ts';
+import { setup, update, getVelocity, moveLeft, rotateShape, moveRight, moveDown, downFast, grid, currentShape, score } from '@/logic/logic.ts';
+import {WIDTH_GRID, SIZE_GRID, HEIGHT_GRID} from '@/shared/const.ts';
+import { updateText, updateUI } from './ui/render';
 
-const canvas = document.getElementById('canvas') as HTMLCanvasElement;
-const scoreUI = document.getElementById('score') as HTMLSpanElement;
-export const ctx = canvas?.getContext('2d') as CanvasRenderingContext2D;
+let canvas: HTMLCanvasElement | null =  null;
+let scoreUI: HTMLSpanElement | null = null;
+let ctx:CanvasRenderingContext2D|null  =  null;
 
-setup(ctx, canvas);
+const btnStart: HTMLButtonElement|null = document.getElementById('btnStart') as HTMLButtonElement ;
 
-function update1() {
+function mainLoop() {
 	requestAnimationFrame(() => {
 		setTimeout(() => {
-			update(ctx, scoreUI);
-			update1();
+			update();
+			mainLoop();
 		}, getVelocity());
 	});
 }
 
-update1();
+export function init(canvas1:HTMLCanvasElement, scoreUI1:HTMLSpanElement){
+	canvas = canvas1;
+	scoreUI = scoreUI1;
+	ctx = canvas?.getContext('2d');
+
+	canvas.width = WIDTH_GRID * SIZE_GRID;
+	canvas.height = HEIGHT_GRID * SIZE_GRID;
+
+	setup();
+	mainLoop();
+}
+
+btnStart?.addEventListener('click', ()=>{
+	init(
+		document.getElementById('canvas') as HTMLCanvasElement,
+		document.getElementById('score') as HTMLSpanElement
+	);
+
+	btnStart.disabled = true;
+});
 
 window.addEventListener('update', () => {
-	updateUI(ctx);
+	updateUI(ctx as CanvasRenderingContext2D, grid, currentShape);
+});
+
+window.addEventListener('change_score', () => {
+	if (scoreUI === null){
+		return;
+	}
+
+	updateText(scoreUI, score.toString());
+});
+
+window.addEventListener('game_over', () => {
+	alert('Game over');
+
+	setup();
+});
+
+document.addEventListener('keydown', function(event) {
+	try {
+		switch (event.key) {
+		case 'ArrowLeft':
+			moveLeft();
+			break;
+		case 'ArrowUp':
+			rotateShape();
+			break;
+		case 'ArrowRight':
+			moveRight();
+			break;
+		case 'ArrowDown':
+			moveDown();
+			break;
+		case ' ':
+			downFast();
+			break;
+		}
+	} catch (error) {
+		console.log(error);
+	}
 });
