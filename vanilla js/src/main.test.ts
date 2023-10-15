@@ -7,10 +7,45 @@ init(
 	canvas,
 	scoreElement
 );
-update();
+
+describe('listen core events', () => {
+	test('update', async() => {
+		const ctx = canvas?.getContext('2d');
+
+		const event = new Event('update');
+		await window.dispatchEvent(event);
+
+		expect(ctx?.clearRect).toBeCalled();
+		expect(ctx?.beginPath).toBeCalled();
+		expect(ctx?.moveTo).toBeCalled();
+		expect(ctx?.lineTo).toBeCalled();
+		expect(ctx?.stroke).toBeCalled();
+	});
+
+	test('change_score', async() => {
+		scoreElement.textContent = 'dummy';
+
+		const event = new Event('change_score');
+		await window.dispatchEvent(event);
+
+		expect(scoreElement.textContent).toBe('0');
+	});
+
+	test('game_over', async() => {
+		const alertFn = jest.fn();
+
+		global.alert = alertFn;
+
+		const event = new Event('game_over');
+		await window.dispatchEvent(event);
+
+		expect(alertFn).toBeCalledTimes(1);
+	});
+});
 
 describe('Catch the user interactions', () => {
 	test('press key arrow up', () => {
+		update();
 		const eventSpy = jest.spyOn(window, 'dispatchEvent');
 
 		const event = new KeyboardEvent('keydown', {'key': 'ArrowUp'});
