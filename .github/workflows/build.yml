@@ -1,0 +1,41 @@
+name: Js Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: git-checkout
+        uses: actions/checkout@v3
+
+      - name: pnpm-setup
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+          run_install: false
+
+      - name: Vanilla Js
+        run: |
+          cd 'vanilla js'
+          pnpm install
+
+      - name: Run linter
+        run: |
+          cd 'vanilla js'
+          pnpm lint --no-fix
+
+      - name: Run test
+        run: |
+          cd 'vanilla js'
+          pnpm run test
+
+      - name: Build dashboard
+        run: |
+          cd 'vanilla js'
+          pnpm run build

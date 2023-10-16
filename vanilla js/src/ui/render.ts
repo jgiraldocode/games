@@ -5,7 +5,13 @@ export function updateText(element:HTMLElement, text:string){
 	element.textContent = text;
 }
 
-export function drawRec(ctx:CanvasRenderingContext2D, fillColor:string, x:number, y:number, w:number, h:number){
+export function updateUI(ctx: CanvasRenderingContext2D, grid:Grid, shape:Shape|null) {
+	drawRects(ctx, grid);
+	drawShape(ctx, shape);
+	drawGrid(ctx);
+}
+
+function drawRec(ctx:CanvasRenderingContext2D, fillColor:string, x:number, y:number, w:number, h:number){
 	ctx.fillStyle = fillColor;
 
 	ctx.beginPath();
@@ -14,7 +20,7 @@ export function drawRec(ctx:CanvasRenderingContext2D, fillColor:string, x:number
 	ctx.stroke();
 }
 
-export function drawLine(ctx:CanvasRenderingContext2D, color: string, x1:number, y1:number, x2:number, y2:number){
+function drawLine(ctx:CanvasRenderingContext2D, color: string, x1:number, y1:number, x2:number, y2:number){
 	ctx.strokeStyle = color;
 	ctx.lineWidth = 1;
 
@@ -23,18 +29,6 @@ export function drawLine(ctx:CanvasRenderingContext2D, color: string, x1:number,
 	ctx.lineTo(x2, y2);
 	ctx.stroke();
 }
-
-export function updateUI(ctx: CanvasRenderingContext2D, grid:Grid, shape:Shape|null) {
-	if (ctx === null) {
-		// TODO: add error types and report to logs service
-		throw new Error('Not found context');
-	}
-
-	drawRects(ctx, grid);
-	drawShape(ctx, shape);
-	drawGrid(ctx);
-}
-
 
 function drawGrid(ctx: CanvasRenderingContext2D) {
 	for (let x = 0; x < WIDTH_GRID * SIZE_GRID; x = x + SIZE_GRID) {

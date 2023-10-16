@@ -1,2 +1,3 @@
 # tetris
-Development of a Tetris game with different frameworks
+Development of a Tetris game with ja vanilla
+Create tests with jest
