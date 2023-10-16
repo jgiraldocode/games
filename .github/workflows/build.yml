@@ -8,32 +8,34 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v3
-      with:
-        python-version: '3.x' # Version range or exact version of a Python version to use, using SemVer's version range syntax
-        architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
+      - name: git-checkout
+        uses: actions/checkout@v3
 
-    - name: Vanilla Js
-      run: |
-        cd 'vanilla js'
-        npm install
+      - name: pnpm-setup
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+          run_install: false
 
-    - name: Build dashboard
-      run: |
-        cd 'vanilla js'
-        npm run build
+      - name: Vanilla Js
+        run: |
+          cd 'vanilla js'
+          pnpm install
 
-    - name: Run linter
-      run: |
-        cd 'vanilla js'
-        npm run lint -- --no-fix
+      - name: Run linter
+        run: |
+          cd 'vanilla js'
+          pnpm lint --no-fix
 
-    - name: Run test
-      run: |
-        cd 'vanilla js'
-        npm run test
+      - name: Run test
+        run: |
+          cd 'vanilla js'
+          pnpm run test
+
+      - name: Build dashboard
+        run: |
+          cd 'vanilla js'
+          pnpm run build
