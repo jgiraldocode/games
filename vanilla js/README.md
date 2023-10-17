@@ -12,3 +12,4 @@ TO DO:
 [] Add preview of shape in the floor
 [] Add preview of next shape
 [] Add maximun score using zapier
+[] Add link to my page
