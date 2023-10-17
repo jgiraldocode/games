@@ -9,7 +9,11 @@
     <div class="main">
         <h3>Puntaje: <span id="score">0</span></h3>
         <canvas id="canvas"></canvas>
-        <button id="btnStart">Iniciar Juego</button>
+        <button type="button" id="btnStart">Iniciar Juego</button>
+        <audio id="soundPlayer" loop>
+            <source src="sound.mp3" type="audio/mp3">
+            Your browser does not support the audio tag.
+        </audio>
     </div>
 </body>
 <script type="module" src="/src/main.ts"></script>

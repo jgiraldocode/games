@@ -8,6 +8,7 @@ let scoreUI: HTMLSpanElement | null = null;
 let ctx:CanvasRenderingContext2D|null  =  null;
 
 const btnStart: HTMLButtonElement|null = document.getElementById('btnStart') as HTMLButtonElement ;
+const audio:HTMLAudioElement|null = document.getElementById('soundPlayer') as HTMLAudioElement;
 
 function mainLoop() {
 	requestAnimationFrame(() => {
@@ -36,6 +37,7 @@ btnStart?.addEventListener('click', ()=>{
 		document.getElementById('score') as HTMLSpanElement
 	);
 
+	audio?.play();
 	btnStart.disabled = true;
 });
 
@@ -52,8 +54,10 @@ window.addEventListener('change_score', () => {
 });
 
 window.addEventListener('game_over', () => {
+	audio?.pause();
 	alert('Game over');
 
+	audio?.play();
 	setup();
 });
 
