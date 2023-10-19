@@ -15,12 +15,13 @@ describe('draw functions', () => {
 		const canvas = document.createElement('canvas');
 		const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 		const grid = [
-			[0, 0, 0, 0],
-			[1, 0, 0, 0]
+			['', '', '', ''],
+			['#ff', '', '', '']
 		];
 		const shape:Shape = {
 			x : 0,
 			y:0,
+			color: '#fff',
 			shape: [
 				[0, 1, 1],
 				[1, 1, 0]
@@ -41,8 +42,8 @@ describe('draw functions', () => {
 		const canvas = document.createElement('canvas');
 		const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 		const grid = [
-			[0, 0, 0, 0],
-			[0, 0, 0, 0]
+			['', '', '', ''],
+			['', '', '', '']
 		];
 		const shape = null;
 
