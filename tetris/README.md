@@ -1,7 +1,8 @@
 
 TO DO:
 
-- [] mute sound
+- [x] mute sound
+- [] change volumen sound
 - [] Add instruction to play
 - [] Allow rotation when shape are in the limit
 - [] Add favicon

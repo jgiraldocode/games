@@ -7,8 +7,10 @@ let canvas: HTMLCanvasElement | null =  null;
 let scoreUI: HTMLSpanElement | null = null;
 let ctx:CanvasRenderingContext2D|null  =  null;
 
-const btnStart: HTMLButtonElement|null = document.getElementById('btnStart') as HTMLButtonElement ;
-const audio:HTMLAudioElement|null = document.getElementById('soundPlayer') as HTMLAudioElement;
+const btnStart: HTMLButtonElement = document.getElementById('btnStart') as HTMLButtonElement ;
+const btnSound: HTMLButtonElement = document.getElementById('btnSound') as HTMLButtonElement ;
+const soundStatus: HTMLSpanElement = document.getElementById('soundStatus') as HTMLButtonElement ;
+const audio:HTMLAudioElement = document.getElementById('soundPlayer') as HTMLAudioElement;
 
 function mainLoop() {
 	requestAnimationFrame(() => {
@@ -17,6 +19,17 @@ function mainLoop() {
 			mainLoop();
 		}, getVelocity());
 	});
+}
+
+function switchSound(){
+	if (audio?.paused){
+		audio.play();
+		updateText(soundStatus, 'off');
+		return;
+	}
+
+	audio?.pause();
+	updateText(soundStatus, 'on');
 }
 
 export function init(canvasElement:HTMLCanvasElement, scoreElement:HTMLSpanElement){
@@ -39,6 +52,12 @@ btnStart?.addEventListener('click', ()=>{
 
 	audio?.play();
 	btnStart.disabled = true;
+	btnStart.blur();
+});
+
+btnSound?.addEventListener('click', ()=>{
+	switchSound();
+	btnSound.blur();
 });
 
 window.addEventListener('update', () => {

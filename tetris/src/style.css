@@ -39,13 +39,22 @@ h3 {
 button {
   margin: 24px;
   padding: 12px;
-  background: black;
-  color: yellow;
-  border: 2px solid yellow;
   cursor: pointer;
 }
 
 button:disabled{
   color: grey;
   border: 2px solid grey;
+}
+
+.btn-green{
+  background: black;
+  color: #01e64d;
+  border: 2px solid #01e64d;
+}
+
+.btn-blue{
+  background: black;
+  color: #33a1fd;
+  border: 2px solid #33a1fd;
 }
