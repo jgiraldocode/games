@@ -10,7 +10,7 @@ TO DO:
 - [] Allow doing hold
 - [] Add support for movile
 - [] Add logger
-- [] Add colors for shapes
+- [x] Add colors for shapes
 - [] Add preview of shape in the floor
 - [] Add preview of next shape
 - [] Add maximun score using zapier
