@@ -15,6 +15,7 @@ export function setup() {
 
 	initGrid();
 	window.dispatchEvent(new Event('update'));
+	window.dispatchEvent(new Event('change_score'));
 }
 
 export function getVelocity(): number {

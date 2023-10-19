@@ -31,8 +31,9 @@ describe('Validate the game events', () => {
 		expect(grid.length).toBe(HEIGHT_GRID);
 		expect(grid[0].length).toBe(WIDTH_GRID);
 		expect(score).toBe(0);
-		expect(updateEvent).toBeCalledTimes(1);
+		expect(updateEvent).toBeCalledTimes(2);
 		expect((updateEvent.mock.calls[0][0] as Event).type).toBe('update');
+		expect((updateEvent.mock.calls[1][0] as Event).type).toBe('change_score');
 
 		for (let y = 0; y < grid.length; y++) {
 			for (let x = 0; x < grid[y].length; x++) {
@@ -85,8 +86,9 @@ describe('Validate the game events', () => {
 		expect(grid.length).toBe(HEIGHT_GRID);
 		expect(grid[0].length).toBe(WIDTH_GRID);
 		expect(score).toBe(0);
-		expect(updateEvent).toBeCalledTimes(1);
+		expect(updateEvent).toBeCalledTimes(2);
 		expect((updateEvent.mock.calls[0][0] as Event).type).toBe('update');
+		expect((updateEvent.mock.calls[1][0] as Event).type).toBe('change_score');
 
 		for (let y = 0; y < grid.length; y++) {
 			for (let x = 0; x < grid[y].length; x++) {

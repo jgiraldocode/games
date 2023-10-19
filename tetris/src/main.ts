@@ -19,9 +19,9 @@ function mainLoop() {
 	});
 }
 
-export function init(canvas1:HTMLCanvasElement, scoreUI1:HTMLSpanElement){
-	canvas = canvas1;
-	scoreUI = scoreUI1;
+export function init(canvasElement:HTMLCanvasElement, scoreElement:HTMLSpanElement){
+	canvas = canvasElement;
+	scoreUI = scoreElement;
 	ctx = canvas?.getContext('2d');
 
 	canvas.width = WIDTH_GRID * SIZE_GRID;
