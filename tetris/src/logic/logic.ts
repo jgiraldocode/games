@@ -1,5 +1,5 @@
 import { Grid, Shape } from '@/shared/types.ts';
-import { HEIGHT_GRID, Pieces, WIDTH_GRID } from '@/shared/const';
+import { HEIGHT_GRID, Pieces, SHAPE_COLORS, WIDTH_GRID } from '@/shared/const';
 
 const MAX_VELOCITY = 500;
 const MIN_VELOCITY = 150;
@@ -115,7 +115,7 @@ function initGrid() {
 	grid = [];
 
 	for (let i = 0; i < HEIGHT_GRID; i++) {
-		const row = new Array(WIDTH_GRID).fill(0);
+		const row = new Array(WIDTH_GRID).fill('');
 		grid.push(row);
 	}
 }
@@ -125,7 +125,7 @@ function isFreeSpace(grid:Grid, shape:Shape, x:number, y:number){
 		return false;
 	}
 
-	return  grid[shape.y + y][shape.x + x] === 0;
+	return  grid[shape.y + y][shape.x + x] === '';
 }
 
 function checkCollition() {
@@ -157,7 +157,7 @@ function solidity() {
 	for (let y = 0; y < currentShape.shape.length; y++) {
 		for (let x = 0; x < currentShape.shape[y].length; x++) {
 			if (currentShape.shape[y][x] === 1) {
-				grid[posY + y][posX + x] = 1;
+				grid[posY + y][posX + x] = currentShape.color;
 			}
 		}
 
@@ -175,7 +175,7 @@ function removeRowCompleteAndIncreaseScore(y:number){
 	score += WIDTH_GRID;
 
 	grid.splice(y, 1);
-	grid.unshift(new Array(WIDTH_GRID).fill(0));
+	grid.unshift(new Array(WIDTH_GRID).fill(''));
 
 	window.dispatchEvent(new Event('change_score'));
 }
@@ -184,7 +184,7 @@ function reviewCompletedRows() {
 	for (let y = 0; y < grid.length; y++) {
 		let allRowFill = true;
 		for (let x = 0; x < grid[y].length; x++) {
-			if (grid[y][x] === 1) {
+			if (grid[y][x] !== '') {
 				continue;
 			}
 
@@ -202,8 +202,11 @@ function reviewCompletedRows() {
 }
 
 function getRandomShape():Shape{
-	const shape = { ...Pieces[getRandomnumber(Pieces.length)] };
+	const shape:Shape = { ...Pieces[getRandomnumber(Pieces.length)] };
+	const color:string = SHAPE_COLORS[getRandomnumber(SHAPE_COLORS.length)];
+
 	shape.x = Math.round(WIDTH_GRID / 2);
+	shape.color = color;
 
 	return shape;
 }

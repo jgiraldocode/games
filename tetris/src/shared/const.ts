@@ -3,8 +3,7 @@ import { Shape } from '@/shared/types.ts';
 export const SIZE_GRID = 50;
 export const HEIGHT_GRID = 1000 / SIZE_GRID;
 export const WIDTH_GRID = 500 / SIZE_GRID;
-export const SHAPE_COLOR = '#ff0000';
-export const SOLID_COLOR = '#ffff00';
+export const SHAPE_COLORS = ['#33A1FD', '#FFD700', '#B57EDC', '#00E64D', '#FF6B6B', '#87CEEB', '#FFA500', '#B0B0B0'];
 
 export const Pieces = [
 	{

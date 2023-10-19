@@ -1,4 +1,4 @@
-import { HEIGHT_GRID, SHAPE_COLOR, SIZE_GRID, SOLID_COLOR, WIDTH_GRID } from '@/shared/const';
+import { HEIGHT_GRID, SIZE_GRID, WIDTH_GRID } from '@/shared/const';
 import { Grid, Shape } from '@/shared/types';
 
 export function updateText(element:HTMLElement, text:string){
@@ -22,7 +22,7 @@ function drawRec(ctx:CanvasRenderingContext2D, fillColor:string, x:number, y:num
 
 function drawLine(ctx:CanvasRenderingContext2D, color: string, x1:number, y1:number, x2:number, y2:number){
 	ctx.strokeStyle = color;
-	ctx.lineWidth = 1;
+	ctx.lineWidth = 0.8;
 
 	ctx.beginPath();
 	ctx.moveTo(x1, y1);
@@ -32,11 +32,11 @@ function drawLine(ctx:CanvasRenderingContext2D, color: string, x1:number, y1:num
 
 function drawGrid(ctx: CanvasRenderingContext2D) {
 	for (let x = 0; x < WIDTH_GRID * SIZE_GRID; x = x + SIZE_GRID) {
-		drawLine(ctx, 'grey', x, 0, x, HEIGHT_GRID * SIZE_GRID);
+		drawLine(ctx, 'white', x, 0, x, HEIGHT_GRID * SIZE_GRID);
 	}
 
 	for (let y = 0; y < HEIGHT_GRID * SIZE_GRID; y = y + SIZE_GRID) {
-		drawLine(ctx, 'grey', 0, y, HEIGHT_GRID * SIZE_GRID, y);
+		drawLine(ctx, 'white', 0, y, HEIGHT_GRID * SIZE_GRID, y);
 	}
 }
 
@@ -45,11 +45,11 @@ function drawRects(ctx: CanvasRenderingContext2D, grid:Grid) {
 
 	for (let i = 0; i < grid.length; i++) {
 		for (let j = 0; j < grid[i].length; j++) {
-			if (grid[i][j] === 0) {
+			if (grid[i][j] === '') {
 				continue;
 			}
 
-			drawRec(ctx, SOLID_COLOR, j * SIZE_GRID, i * SIZE_GRID, SIZE_GRID, SIZE_GRID);
+			drawRec(ctx, grid[i][j], j * SIZE_GRID, i * SIZE_GRID, SIZE_GRID, SIZE_GRID);
 		}
 	}
 }
@@ -65,7 +65,7 @@ function drawShape(ctx: CanvasRenderingContext2D, shape: Shape | null) {
 				continue;
 			}
 
-			drawRec(ctx, SHAPE_COLOR, (shape.x + j) * SIZE_GRID, (shape.y + i) * SIZE_GRID, SIZE_GRID, SIZE_GRID);
+			drawRec(ctx, shape.color, (shape.x + j) * SIZE_GRID, (shape.y + i) * SIZE_GRID, SIZE_GRID, SIZE_GRID);
 		}
 	}
 }

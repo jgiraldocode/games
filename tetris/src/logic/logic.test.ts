@@ -5,7 +5,7 @@ describe('Validate the game events', () => {
 	test('Game over', () => {
 		for (let y = 0; y < grid.length; y++) {
 			for (let x = 0; x < grid[y].length; x++) {
-				grid[y][x] = 1;
+				grid[y][x] = '#fff';
 			}
 		}
 
@@ -37,7 +37,7 @@ describe('Validate the game events', () => {
 
 		for (let y = 0; y < grid.length; y++) {
 			for (let x = 0; x < grid[y].length; x++) {
-				expect(grid[y][x]).toBe(0);
+				expect(grid[y][x]).toBe('');
 			}
 
 		}
@@ -61,7 +61,7 @@ describe('Validate the game events', () => {
 		update();
 
 		for (let x = 0; x < grid[0].length; x++) {
-			grid[grid.length - 1][x] = 1;
+			grid[grid.length - 1][x] = '#fff';
 		}
 
 		const changeScoreEvent = jest.fn();
@@ -92,7 +92,7 @@ describe('Validate the game events', () => {
 
 		for (let y = 0; y < grid.length; y++) {
 			for (let x = 0; x < grid[y].length; x++) {
-				expect(grid[y][x]).toBe(0);
+				expect(grid[y][x]).toBe('');
 			}
 
 		}
