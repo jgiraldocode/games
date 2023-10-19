@@ -20,22 +20,22 @@ jobs:
           version: 8
           run_install: false
 
-      - name: Vanilla Js
+      - name: Tetris
         run: |
-          cd 'vanilla js'
+          cd 'tetris'
           pnpm install
 
       - name: Run linter
         run: |
-          cd 'vanilla js'
+          cd 'tetris'
           pnpm lint --no-fix
 
       - name: Run test
         run: |
-          cd 'vanilla js'
+          cd 'tetris'
           pnpm run test
 
       - name: Build dashboard
         run: |
-          cd 'vanilla js'
+          cd 'tetris'
           pnpm run build
