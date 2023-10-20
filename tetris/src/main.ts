@@ -6,6 +6,7 @@ import { updateText, updateUI } from './ui/render';
 let canvas: HTMLCanvasElement | null =  null;
 let scoreUI: HTMLSpanElement | null = null;
 let ctx:CanvasRenderingContext2D|null  =  null;
+let enableSound: boolean = true;
 
 const btnStart: HTMLButtonElement = document.getElementById('btnStart') as HTMLButtonElement ;
 const btnSound: HTMLButtonElement = document.getElementById('btnSound') as HTMLButtonElement ;
@@ -22,14 +23,16 @@ function mainLoop() {
 }
 
 function switchSound(){
-	if (audio?.paused){
+	if (!enableSound){
 		audio.play();
 		updateText(soundStatus, 'off');
+		enableSound = true;
 		return;
 	}
 
 	audio?.pause();
 	updateText(soundStatus, 'on');
+	enableSound = false;
 }
 
 export function init(canvasElement:HTMLCanvasElement, scoreElement:HTMLSpanElement){
@@ -50,7 +53,7 @@ btnStart?.addEventListener('click', ()=>{
 		document.getElementById('score') as HTMLSpanElement
 	);
 
-	audio?.play();
+	if (enableSound) audio?.play();
 	btnStart.disabled = true;
 	btnStart.blur();
 });
