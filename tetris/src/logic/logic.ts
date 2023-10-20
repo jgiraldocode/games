@@ -7,6 +7,7 @@ const MIN_VELOCITY = 150;
 
 export let grid: Grid = [];
 export let currentShape: Shape | null = null;
+export let shadowShape: Shape | null = null;
 export let score: number = 0;
 export let gameStatus: GameStatus = GameStatus.NotStarted;
 
@@ -39,6 +40,19 @@ export function update() {
 	window.dispatchEvent(new Event('update'));
 }
 
+function calculateShadow(shape:Shape){
+	shadowShape = {...shape};
+	shadowShape.color = '#ffffff61';
+
+	for (let y = shadowShape.y; y < grid.length; y++) {
+		shadowShape.y = y;
+		if (checkCollition(shadowShape)) {
+			shadowShape.y--;
+			break;
+		}
+	}
+}
+
 export function rotateShape(){
 	if (currentShape === null) {
 		// TODO: add error types and report to logs service
@@ -49,6 +63,7 @@ export function rotateShape(){
 	shapeWithRotation.shape = rotate(shapeWithRotation);
 	if (!checkCollition(shapeWithRotation)) {
 		currentShape = shapeWithRotation;
+		calculateShadow(currentShape);
 		window.dispatchEvent(new Event('update'));
 		return;
 	}
@@ -60,6 +75,7 @@ export function rotateShape(){
 		}
 
 		currentShape = shapeWithRotation;
+		calculateShadow(currentShape);
 		window.dispatchEvent(new Event('update'));
 		return;
 	}
@@ -73,6 +89,7 @@ export function moveRight(){
 
 	currentShape.x++;
 	if (!checkCollition(currentShape)) {
+		calculateShadow(currentShape);
 		window.dispatchEvent(new Event('update'));
 		return;
 	}
@@ -87,6 +104,7 @@ export function moveLeft(){
 	}
 	currentShape.x--;
 	if (!checkCollition(currentShape)) {
+		calculateShadow(currentShape);
 		window.dispatchEvent(new Event('update'));
 		return;
 
@@ -230,6 +248,7 @@ function getRandomShape():Shape{
 function  updateCurrentShape(){
 	if (currentShape === null) {
 		currentShape = getRandomShape();
+		calculateShadow(currentShape);
 		return;
 	}
 
@@ -240,8 +259,9 @@ function  updateCurrentShape(){
 
 	currentShape.y--;
 	solidity();
-	currentShape = getRandomShape();
 	reviewCompletedRows();
+	currentShape = getRandomShape();
+	calculateShadow(currentShape);
 }
 
 function rotate(piece: Shape) {

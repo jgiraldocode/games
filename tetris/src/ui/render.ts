@@ -5,8 +5,9 @@ export function updateText(element:HTMLElement, text:string){
 	element.textContent = text;
 }
 
-export function updateUI(ctx: CanvasRenderingContext2D, grid:Grid, shape:Shape|null) {
+export function updateUI(ctx: CanvasRenderingContext2D, grid:Grid, shape:Shape|null, shadowShape:Shape|null) {
 	drawRects(ctx, grid);
+	drawShape(ctx, shadowShape);
 	drawShape(ctx, shape);
 	drawGrid(ctx);
 }

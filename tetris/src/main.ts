@@ -1,5 +1,5 @@
 import './style.css';
-import { setup, update, getVelocity, moveLeft, rotateShape, moveRight, moveDown, downFast, grid, currentShape, score, gameStatus, setGameStatus } from '@/logic/logic.ts';
+import { setup, update, getVelocity, moveLeft, rotateShape, moveRight, moveDown, downFast, grid, currentShape, score, gameStatus, setGameStatus, shadowShape } from '@/logic/logic.ts';
 import {WIDTH_GRID, SIZE_GRID, HEIGHT_GRID} from '@/shared/const.ts';
 import { updateText, updateUI } from './ui/render';
 import { GameStatus } from './shared/types';
@@ -98,7 +98,7 @@ btnSound?.addEventListener('click', ()=>{
 });
 
 window.addEventListener('update', () => {
-	updateUI(ctx as CanvasRenderingContext2D, grid, currentShape);
+	updateUI(ctx as CanvasRenderingContext2D, grid, currentShape, shadowShape);
 });
 
 window.addEventListener('change_score', () => {
