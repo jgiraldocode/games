@@ -1,4 +1,4 @@
-import { Grid, Shape } from '@/shared/types.ts';
+import { GameStatus, Grid, Shape } from '@/shared/types.ts';
 import { HEIGHT_GRID, Pieces, SHAPE_COLORS, WIDTH_GRID } from '@/shared/const';
 
 const MAX_VELOCITY = 500;
@@ -8,14 +8,20 @@ const MIN_VELOCITY = 150;
 export let grid: Grid = [];
 export let currentShape: Shape | null = null;
 export let score: number = 0;
+export let gameStatus: GameStatus = GameStatus.NotStarted;
 
 export function setup() {
 	score = 0;
 	currentShape = null;
+	gameStatus = GameStatus.Running;
 
 	initGrid();
 	window.dispatchEvent(new Event('update'));
 	window.dispatchEvent(new Event('change_score'));
+}
+
+export function setGameStatus(_gameStatus: GameStatus){
+	gameStatus = _gameStatus;
 }
 
 export function getVelocity(): number {

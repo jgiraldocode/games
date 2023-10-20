@@ -6,3 +6,9 @@ export type Shape = {
 }
 
 export type Grid = Array<Array<string>>;
+
+export enum GameStatus {
+    NotStarted = 'not_started',
+    Running = 'running',
+    Pause = 'pause'
+}
