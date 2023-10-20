@@ -1,5 +1,6 @@
-import { update } from '@/logic/logic.ts';
+import { setGameStatus, update } from '@/logic/logic.ts';
 import { init } from '@/main.ts';
+import { GameStatus } from './shared/types';
 
 const canvas = document.createElement('canvas') as HTMLCanvasElement;
 const scoreElement = document.createElement('span') as HTMLSpanElement;
@@ -44,6 +45,21 @@ describe('listen core events', () => {
 });
 
 describe('Catch the user interactions', () => {
+	test('press any key when game is pause', () => {
+		update();
+		setGameStatus(GameStatus.Pause);
+
+		const eventSpy = jest.spyOn(window, 'dispatchEvent');
+
+		const event = new KeyboardEvent('keydown', {'key': 'ArrowUp'});
+		document.dispatchEvent(event);
+
+		expect(eventSpy).toBeCalledTimes(0);
+
+		eventSpy.mockRestore();
+		setGameStatus(GameStatus.Running);
+	});
+
 	test('press key arrow up', () => {
 		update();
 		const eventSpy = jest.spyOn(window, 'dispatchEvent');

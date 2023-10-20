@@ -28,7 +28,7 @@ describe('draw functions', () => {
 			]
 		};
 
-		updateUI(ctx, grid, shape);
+		updateUI(ctx, grid, shape, null);
 
 		expect(ctx?.rect).toBeCalled();
 		expect(ctx?.clearRect).toBeCalled();
@@ -47,7 +47,7 @@ describe('draw functions', () => {
 		];
 		const shape = null;
 
-		updateUI(ctx, grid, shape);
+		updateUI(ctx, grid, shape, null);
 
 		expect(ctx?.rect).toBeCalledTimes(0);
 		expect(ctx?.clearRect).toBeCalled();

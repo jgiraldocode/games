@@ -1,5 +1,6 @@
-import { currentShape, downFast, grid, score, setup, update } from './logic.ts';
+import { currentShape, downFast, gameStatus, grid, score, setGameStatus, setup, update } from './logic.ts';
 import {HEIGHT_GRID, WIDTH_GRID} from '@/shared/const.ts';
+import { GameStatus } from '@/shared/types.ts';
 
 describe('Validate the game events', () => {
 	test('Game over', () => {
@@ -31,6 +32,7 @@ describe('Validate the game events', () => {
 		expect(grid.length).toBe(HEIGHT_GRID);
 		expect(grid[0].length).toBe(WIDTH_GRID);
 		expect(score).toBe(0);
+		expect(gameStatus).toBe(GameStatus.Running);
 		expect(updateEvent).toBeCalledTimes(2);
 		expect((updateEvent.mock.calls[0][0] as Event).type).toBe('update');
 		expect((updateEvent.mock.calls[1][0] as Event).type).toBe('change_score');
@@ -86,6 +88,7 @@ describe('Validate the game events', () => {
 		expect(grid.length).toBe(HEIGHT_GRID);
 		expect(grid[0].length).toBe(WIDTH_GRID);
 		expect(score).toBe(0);
+		expect(gameStatus).toBe(GameStatus.Running);
 		expect(updateEvent).toBeCalledTimes(2);
 		expect((updateEvent.mock.calls[0][0] as Event).type).toBe('update');
 		expect((updateEvent.mock.calls[1][0] as Event).type).toBe('change_score');
@@ -96,5 +99,15 @@ describe('Validate the game events', () => {
 			}
 
 		}
+	});
+});
+
+describe('Validate the public functions', ()=>{
+	test('change game status value', ()=>{
+		setup();
+		expect(gameStatus).toBe(GameStatus.Running);
+
+		setGameStatus(GameStatus.Pause);
+		expect(gameStatus).toBe(GameStatus.Pause);
 	});
 });

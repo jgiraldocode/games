@@ -1,35 +1,48 @@
 import './style.css';
-import { setup, update, getVelocity, moveLeft, rotateShape, moveRight, moveDown, downFast, grid, currentShape, score } from '@/logic/logic.ts';
+import { setup, update, getVelocity, moveLeft, rotateShape, moveRight, moveDown, downFast, grid, currentShape, score, gameStatus, setGameStatus, shadowShape } from '@/logic/logic.ts';
 import {WIDTH_GRID, SIZE_GRID, HEIGHT_GRID} from '@/shared/const.ts';
 import { updateText, updateUI } from './ui/render';
+import { GameStatus } from './shared/types';
 
 let canvas: HTMLCanvasElement | null =  null;
 let scoreUI: HTMLSpanElement | null = null;
 let ctx:CanvasRenderingContext2D|null  =  null;
+let enableSound: boolean = true;
+let timeOut:NodeJS.Timeout|null = null;
 
-const btnStart: HTMLButtonElement = document.getElementById('btnStart') as HTMLButtonElement ;
+const btnControlGame: HTMLButtonElement = document.getElementById('btnControlGame') as HTMLButtonElement ;
 const btnSound: HTMLButtonElement = document.getElementById('btnSound') as HTMLButtonElement ;
 const soundStatus: HTMLSpanElement = document.getElementById('soundStatus') as HTMLButtonElement ;
 const audio:HTMLAudioElement = document.getElementById('soundPlayer') as HTMLAudioElement;
 
 function mainLoop() {
 	requestAnimationFrame(() => {
-		setTimeout(() => {
-			update();
+		if (timeOut !== null){
+			clearTimeout(timeOut);
+		}
+
+		timeOut = setTimeout(() => {
+			if (gameStatus !== GameStatus.Running) {
+				return;
+			}
+
 			mainLoop();
+			update();
 		}, getVelocity());
 	});
 }
 
 function switchSound(){
-	if (audio?.paused){
+	if (!enableSound){
 		audio.play();
 		updateText(soundStatus, 'off');
+		enableSound = true;
 		return;
 	}
 
 	audio?.pause();
 	updateText(soundStatus, 'on');
+	enableSound = false;
 }
 
 export function init(canvasElement:HTMLCanvasElement, scoreElement:HTMLSpanElement){
@@ -44,15 +57,39 @@ export function init(canvasElement:HTMLCanvasElement, scoreElement:HTMLSpanEleme
 	mainLoop();
 }
 
-btnStart?.addEventListener('click', ()=>{
-	init(
-		document.getElementById('canvas') as HTMLCanvasElement,
-		document.getElementById('score') as HTMLSpanElement
-	);
+function run(){
+	btnControlGame.blur();
+	setGameStatus(GameStatus.Running);
+	updateText(btnControlGame, 'Pausar');
+	if (enableSound) audio?.play();
+}
 
-	audio?.play();
-	btnStart.disabled = true;
-	btnStart.blur();
+function pause(){
+	btnControlGame.blur();
+	setGameStatus(GameStatus.Pause);
+	updateText(btnControlGame, 'Continuar');
+	if (enableSound) audio?.pause();
+}
+
+btnControlGame?.addEventListener('click', ()=>{
+	switch (gameStatus){
+	case GameStatus.NotStarted:
+		init(
+					document.getElementById('canvas') as HTMLCanvasElement,
+					document.getElementById('score') as HTMLSpanElement
+		);
+		run();
+
+		break;
+	case GameStatus.Pause:
+		run();
+		mainLoop();
+		break;
+
+	case GameStatus.Running:
+		pause();
+		break;
+	}
 });
 
 btnSound?.addEventListener('click', ()=>{
@@ -61,7 +98,7 @@ btnSound?.addEventListener('click', ()=>{
 });
 
 window.addEventListener('update', () => {
-	updateUI(ctx as CanvasRenderingContext2D, grid, currentShape);
+	updateUI(ctx as CanvasRenderingContext2D, grid, currentShape, shadowShape);
 });
 
 window.addEventListener('change_score', () => {
@@ -73,14 +110,18 @@ window.addEventListener('change_score', () => {
 });
 
 window.addEventListener('game_over', () => {
-	audio?.pause();
+	if (enableSound) audio?.pause();
 	alert('Game over');
 
-	audio?.play();
+	if (enableSound) audio?.play();
 	setup();
 });
 
 document.addEventListener('keydown', function(event) {
+	if (gameStatus !== GameStatus.Running){
+		return;
+	}
+
 	try {
 		switch (event.key) {
 		case 'ArrowLeft':

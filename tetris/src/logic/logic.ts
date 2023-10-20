@@ -1,4 +1,4 @@
-import { Grid, Shape } from '@/shared/types.ts';
+import { GameStatus, Grid, Shape } from '@/shared/types.ts';
 import { HEIGHT_GRID, Pieces, SHAPE_COLORS, WIDTH_GRID } from '@/shared/const';
 
 const MAX_VELOCITY = 500;
@@ -7,15 +7,22 @@ const MIN_VELOCITY = 150;
 
 export let grid: Grid = [];
 export let currentShape: Shape | null = null;
+export let shadowShape: Shape | null = null;
 export let score: number = 0;
+export let gameStatus: GameStatus = GameStatus.NotStarted;
 
 export function setup() {
 	score = 0;
 	currentShape = null;
+	gameStatus = GameStatus.Running;
 
 	initGrid();
 	window.dispatchEvent(new Event('update'));
 	window.dispatchEvent(new Event('change_score'));
+}
+
+export function setGameStatus(_gameStatus: GameStatus){
+	gameStatus = _gameStatus;
 }
 
 export function getVelocity(): number {
@@ -25,12 +32,25 @@ export function getVelocity(): number {
 export function update() {
 	updateCurrentShape();
 
-	if (checkCollition()) {
+	if (checkCollition(currentShape)) {
 		window.dispatchEvent(new Event('game_over'));
 		return;
 	}
 
 	window.dispatchEvent(new Event('update'));
+}
+
+function calculateShadow(shape:Shape){
+	shadowShape = {...shape};
+	shadowShape.color = '#ffffff61';
+
+	for (let y = shadowShape.y; y < grid.length; y++) {
+		shadowShape.y = y;
+		if (checkCollition(shadowShape)) {
+			shadowShape.y--;
+			break;
+		}
+	}
 }
 
 export function rotateShape(){
@@ -39,14 +59,26 @@ export function rotateShape(){
 		throw new Error('Not found scoreUI');
 	}
 
-	const shapeWithoutRotation = currentShape.shape;
-	currentShape.shape = rotate(currentShape);
-	if (!checkCollition()) {
+	const shapeWithRotation = {...currentShape};
+	shapeWithRotation.shape = rotate(shapeWithRotation);
+	if (!checkCollition(shapeWithRotation)) {
+		currentShape = shapeWithRotation;
+		calculateShadow(currentShape);
 		window.dispatchEvent(new Event('update'));
 		return;
 	}
 
-	currentShape.shape = shapeWithoutRotation;
+	for (let x = currentShape.x; x > currentShape.x - 4;x--){
+		shapeWithRotation.x = x;
+		if (checkCollition(shapeWithRotation)) {
+			continue;
+		}
+
+		currentShape = shapeWithRotation;
+		calculateShadow(currentShape);
+		window.dispatchEvent(new Event('update'));
+		return;
+	}
 }
 
 export function moveRight(){
@@ -56,7 +88,8 @@ export function moveRight(){
 	}
 
 	currentShape.x++;
-	if (!checkCollition()) {
+	if (!checkCollition(currentShape)) {
+		calculateShadow(currentShape);
 		window.dispatchEvent(new Event('update'));
 		return;
 	}
@@ -70,7 +103,8 @@ export function moveLeft(){
 		throw new Error('Not found scoreUI');
 	}
 	currentShape.x--;
-	if (!checkCollition()) {
+	if (!checkCollition(currentShape)) {
+		calculateShadow(currentShape);
 		window.dispatchEvent(new Event('update'));
 		return;
 
@@ -86,7 +120,7 @@ export function moveDown(){
 	}
 
 	currentShape.y++;
-	if (!checkCollition()) {
+	if (!checkCollition(currentShape)) {
 		window.dispatchEvent(new Event('update'));
 		return;
 	}
@@ -102,7 +136,7 @@ export function downFast(){
 
 	for (let y = currentShape.y; y < grid.length; y++) {
 		currentShape.y++;
-		if (checkCollition()) {
+		if (checkCollition(currentShape)) {
 			currentShape.y--;
 			break;
 		}
@@ -128,15 +162,15 @@ function isFreeSpace(grid:Grid, shape:Shape, x:number, y:number){
 	return  grid[shape.y + y][shape.x + x] === '';
 }
 
-function checkCollition() {
-	if (currentShape === null) {
+function checkCollition(shape:Shape|null) {
+	if (shape === null) {
 		// TODO: add error types and report to logs service
-		throw new Error('Not found currentShape');
+		throw new Error('Not found shape');
 	}
 
-	for (let y = 0; y < currentShape.shape.length; y++) {
-		for (let x = 0; x < currentShape.shape[y].length; x++) {
-			if (currentShape.shape[y][x] === 1 && !isFreeSpace(grid, currentShape, x, y)) {
+	for (let y = 0; y < shape.shape.length; y++) {
+		for (let x = 0; x < shape.shape[y].length; x++) {
+			if (shape.shape[y][x] === 1 && !isFreeSpace(grid, shape, x, y)) {
 				return true;
 			}
 		}
@@ -214,18 +248,20 @@ function getRandomShape():Shape{
 function  updateCurrentShape(){
 	if (currentShape === null) {
 		currentShape = getRandomShape();
+		calculateShadow(currentShape);
 		return;
 	}
 
 	currentShape.y++;
-	if (!checkCollition()) {
+	if (!checkCollition(currentShape)) {
 		return;
 	}
 
 	currentShape.y--;
 	solidity();
-	currentShape = getRandomShape();
 	reviewCompletedRows();
+	currentShape = getRandomShape();
+	calculateShadow(currentShape);
 }
 
 function rotate(piece: Shape) {
