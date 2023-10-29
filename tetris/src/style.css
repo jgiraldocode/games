@@ -24,6 +24,8 @@ body {
   flex-direction: column;
   align-items: center;
   color: white;
+  width: 100%;
+  height: 100%;
 }
 
 h3 {
@@ -32,8 +34,10 @@ h3 {
 
 #canvas {
   border: 2px solid white;
-  width: 400px;
-  height: 800px;
+  width: 500px;
+  height: 1000px;
+  max-height: 100%;
+  max-width: 100%;
 }
 
 button {
@@ -59,4 +63,40 @@ button:disabled{
   color: #33a1fd;
   border: 2px solid #33a1fd;
   width: 120px;
+}
+
+footer{
+  text-align: center;
+}
+
+.game {
+  position: relative;
+  width: 100%;
+  height: calc(100% - 170px);
+  display: flex;
+  justify-content: center;
+  align-items: flex-end
+}
+
+.game-controls_secondary{
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.btn-clean{
+  border: none;
+  background-color: transparent;
+  margin: 8px;
+  padding: 0;
+  position: absolute;
+  bottom: 0;
+  display: flex;
+  display: none;
+}
+
+@media (pointer:coarse) {
+  .btn-clean{
+    display: inline;
+  }
 }

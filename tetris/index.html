@@ -10,7 +10,10 @@
 <body>
     <main class="main">
         <h3>Puntaje: <span id="score">0</span></h3>
-        <canvas id="canvas"></canvas>
+        <div class="game" id="game">
+            <canvas id="canvas"></canvas>
+            <button class="btn-clean" type="button" id="btnDown"><img src="./arrow-down.svg" aria-hidden="true"></button>
+        </div>        
         <footer>
             <button class="btn-green" type="button" id="btnControlGame">Iniciar Juego</button>
             <button class="btn-blue" type="button" id="btnSound">Sound: <span id="soundStatus">on</span></button>

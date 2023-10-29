@@ -1,5 +1,5 @@
+import { maxHeight, maxWidth, sizeCube } from '@/main.ts';
 import { currentShape, downFast, gameStatus, grid, score, setGameStatus, setup, update } from './logic.ts';
-import {HEIGHT_GRID, WIDTH_GRID} from '@/shared/const.ts';
 import { GameStatus } from '@/shared/types.ts';
 
 describe('Validate the game events', () => {
@@ -29,8 +29,8 @@ describe('Validate the game events', () => {
 
 		setup();
 
-		expect(grid.length).toBe(HEIGHT_GRID);
-		expect(grid[0].length).toBe(WIDTH_GRID);
+		expect(grid.length).toBe(maxHeight / sizeCube);
+		expect(grid[0].length).toBe(maxWidth / sizeCube);
 		expect(score).toBe(0);
 		expect(gameStatus).toBe(GameStatus.Running);
 		expect(updateEvent).toBeCalledTimes(2);
@@ -85,8 +85,8 @@ describe('Validate the game events', () => {
 
 		setup();
 
-		expect(grid.length).toBe(HEIGHT_GRID);
-		expect(grid[0].length).toBe(WIDTH_GRID);
+		expect(grid.length).toBe(maxHeight / sizeCube);
+		expect(grid[0].length).toBe(maxWidth / sizeCube);
 		expect(score).toBe(0);
 		expect(gameStatus).toBe(GameStatus.Running);
 		expect(updateEvent).toBeCalledTimes(2);

@@ -1,4 +1,4 @@
-import { HEIGHT_GRID, SIZE_GRID, WIDTH_GRID } from '@/shared/const';
+import { maxHeight, maxWidth, sizeCube } from '@/main';
 import { Grid, Shape } from '@/shared/types';
 
 export function updateText(element:HTMLElement, text:string){
@@ -6,24 +6,35 @@ export function updateText(element:HTMLElement, text:string){
 }
 
 export function updateUI(ctx: CanvasRenderingContext2D, grid:Grid, shape:Shape|null, shadowShape:Shape|null) {
-	drawRects(ctx, grid);
+	drawCubes(ctx, grid);
 	drawShape(ctx, shadowShape);
 	drawShape(ctx, shape);
 	drawGrid(ctx);
 }
 
-function drawRec(ctx:CanvasRenderingContext2D, fillColor:string, x:number, y:number, w:number, h:number){
+function drawCube(ctx:CanvasRenderingContext2D, fillColor:string, x:number, y:number, size:number){
 	ctx.fillStyle = fillColor;
 
 	ctx.beginPath();
-	ctx.rect(x, y, w, h);
+
+	drawLine(ctx, fillColor, 4, x + (0 * size / 5), y + (1 * size / 5), x + (2 * size / 5), y + (0 * size / 5));
+	drawLine(ctx, fillColor, 4, x + (2 * size / 5), y + (0 * size / 5), x + (0 * size / 5), y + (2 * size / 5));
+	drawLine(ctx, fillColor, 4, x + (0 * size / 5), y + (2 * size / 5), x + (4 * size / 5), y + (0 * size / 5));
+	drawLine(ctx, fillColor, 4, x + (4 * size / 5), y + (0 * size / 5), x + (0 * size / 5), y + (4 * size / 5));
+	drawLine(ctx, fillColor, 4, x + (0 * size / 5), y + (4 * size / 5), x + (5 * size / 5), y + (1 * size / 5));
+	drawLine(ctx, fillColor, 4, x + (5 * size / 5), y + (1 * size / 5), x + (1 * size / 5), y + (5 * size / 5));
+	drawLine(ctx, fillColor, 4, x + (1 * size / 5), y + (5 * size / 5), x + (5 * size / 5), y + (2 * size / 5));
+	drawLine(ctx, fillColor, 4, x + (5 * size / 5), y + (2 * size / 5), x + (3 * size / 5), y + (5 * size / 5));
+	drawLine(ctx, fillColor, 4, x + (3 * size / 5), y + (5 * size / 5), x + (5 * size / 5), y + (4 * size / 5));
+
+
 	ctx.fill();
 	ctx.stroke();
 }
 
-function drawLine(ctx:CanvasRenderingContext2D, color: string, x1:number, y1:number, x2:number, y2:number){
+function drawLine(ctx:CanvasRenderingContext2D, color: string, lineWidth:number, x1:number, y1:number, x2:number, y2:number){
 	ctx.strokeStyle = color;
-	ctx.lineWidth = 0.8;
+	ctx.lineWidth = lineWidth;
 
 	ctx.beginPath();
 	ctx.moveTo(x1, y1);
@@ -32,17 +43,17 @@ function drawLine(ctx:CanvasRenderingContext2D, color: string, x1:number, y1:num
 }
 
 function drawGrid(ctx: CanvasRenderingContext2D) {
-	for (let x = 0; x < WIDTH_GRID * SIZE_GRID; x = x + SIZE_GRID) {
-		drawLine(ctx, 'white', x, 0, x, HEIGHT_GRID * SIZE_GRID);
+	for (let x = 0; x < maxWidth; x = x + sizeCube) {
+		drawLine(ctx, 'white', 0.8, x, 0, x, maxHeight);
 	}
 
-	for (let y = 0; y < HEIGHT_GRID * SIZE_GRID; y = y + SIZE_GRID) {
-		drawLine(ctx, 'white', 0, y, HEIGHT_GRID * SIZE_GRID, y);
+	for (let y = 0; y < maxHeight; y = y + sizeCube) {
+		drawLine(ctx, 'white', 0.8, 0, y, maxHeight, y);
 	}
 }
 
-function drawRects(ctx: CanvasRenderingContext2D, grid:Grid) {
-	ctx.clearRect(0, 0, WIDTH_GRID * SIZE_GRID, HEIGHT_GRID * SIZE_GRID);
+function drawCubes(ctx: CanvasRenderingContext2D, grid:Grid) {
+	ctx.clearRect(0, 0, maxWidth, maxHeight);
 
 	for (let i = 0; i < grid.length; i++) {
 		for (let j = 0; j < grid[i].length; j++) {
@@ -50,7 +61,7 @@ function drawRects(ctx: CanvasRenderingContext2D, grid:Grid) {
 				continue;
 			}
 
-			drawRec(ctx, grid[i][j], j * SIZE_GRID, i * SIZE_GRID, SIZE_GRID, SIZE_GRID);
+			drawCube(ctx, grid[i][j], j * sizeCube, i * sizeCube, sizeCube);
 		}
 	}
 }
@@ -66,7 +77,7 @@ function drawShape(ctx: CanvasRenderingContext2D, shape: Shape | null) {
 				continue;
 			}
 
-			drawRec(ctx, shape.color, (shape.x + j) * SIZE_GRID, (shape.y + i) * SIZE_GRID, SIZE_GRID, SIZE_GRID);
+			drawCube(ctx, shape.color, (shape.x + j) * sizeCube, (shape.y + i) * sizeCube, sizeCube);
 		}
 	}
 }
