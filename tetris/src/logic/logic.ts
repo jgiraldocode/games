@@ -1,5 +1,6 @@
 import { GameStatus, Grid, Shape } from '@/shared/types.ts';
-import { HEIGHT_GRID, Pieces, SHAPE_COLORS, WIDTH_GRID } from '@/shared/const';
+import { Pieces, SHAPE_COLORS } from '@/shared/const';
+import { maxHeight, maxWidth, sizeCube } from '@/main';
 
 const MAX_VELOCITY = 500;
 const MIN_VELOCITY = 150;
@@ -56,7 +57,7 @@ function calculateShadow(shape:Shape){
 export function rotateShape(){
 	if (currentShape === null) {
 		// TODO: add error types and report to logs service
-		throw new Error('Not found scoreUI');
+		throw new Error('Not found currentShape');
 	}
 
 	const shapeWithRotation = {...currentShape};
@@ -84,7 +85,7 @@ export function rotateShape(){
 export function moveRight(){
 	if (currentShape === null) {
 		// TODO: add error types and report to logs service
-		throw new Error('Not found scoreUI');
+		throw new Error('Not found currentShape');
 	}
 
 	currentShape.x++;
@@ -100,8 +101,9 @@ export function moveRight(){
 export function moveLeft(){
 	if (currentShape === null) {
 		// TODO: add error types and report to logs service
-		throw new Error('Not found scoreUI');
+		throw new Error('Not found currentShape');
 	}
+
 	currentShape.x--;
 	if (!checkCollition(currentShape)) {
 		calculateShadow(currentShape);
@@ -116,7 +118,7 @@ export function moveLeft(){
 export function moveDown(){
 	if (currentShape === null) {
 		// TODO: add error types and report to logs service
-		throw new Error('Not found scoreUI');
+		throw new Error('Not found currentShape');
 	}
 
 	currentShape.y++;
@@ -131,7 +133,7 @@ export function moveDown(){
 export function downFast(){
 	if (currentShape === null) {
 		// TODO: add error types and report to logs service
-		throw new Error('Not found scoreUI');
+		throw new Error('Not found currentShape');
 	}
 
 	for (let y = currentShape.y; y < grid.length; y++) {
@@ -148,8 +150,8 @@ export function downFast(){
 function initGrid() {
 	grid = [];
 
-	for (let i = 0; i < HEIGHT_GRID; i++) {
-		const row = new Array(WIDTH_GRID).fill('');
+	for (let i = 0; i < maxHeight / sizeCube; i++) {
+		const row = new Array(maxWidth / sizeCube).fill('');
 		grid.push(row);
 	}
 }
@@ -206,10 +208,10 @@ function getRandomnumber(x: number) {
 }
 
 function removeRowCompleteAndIncreaseScore(y:number){
-	score += WIDTH_GRID;
+	score += maxWidth / sizeCube;
 
 	grid.splice(y, 1);
-	grid.unshift(new Array(WIDTH_GRID).fill(''));
+	grid.unshift(new Array(maxWidth / sizeCube).fill(''));
 
 	window.dispatchEvent(new Event('change_score'));
 }
@@ -239,7 +241,7 @@ function getRandomShape():Shape{
 	const shape:Shape = { ...Pieces[getRandomnumber(Pieces.length)] };
 	const color:string = SHAPE_COLORS[getRandomnumber(SHAPE_COLORS.length)];
 
-	shape.x = Math.round(WIDTH_GRID / 2);
+	shape.x = Math.round(maxWidth / sizeCube / 2);
 	shape.color = color;
 
 	return shape;

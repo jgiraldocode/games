@@ -1,6 +1,5 @@
 import './style.css';
 import { setup, update, getVelocity, moveLeft, rotateShape, moveRight, moveDown, downFast, grid, currentShape, score, gameStatus, setGameStatus, shadowShape } from '@/logic/logic.ts';
-import {WIDTH_GRID, SIZE_GRID, HEIGHT_GRID} from '@/shared/const.ts';
 import { updateText, updateUI } from './ui/render';
 import { GameStatus } from './shared/types';
 
@@ -12,8 +11,10 @@ let timeOut:NodeJS.Timeout|null = null;
 
 const btnControlGame: HTMLButtonElement = document.getElementById('btnControlGame') as HTMLButtonElement ;
 const btnSound: HTMLButtonElement = document.getElementById('btnSound') as HTMLButtonElement ;
+const btnDown: HTMLButtonElement = document.getElementById('btnDown') as HTMLButtonElement ;
 const soundStatus: HTMLSpanElement = document.getElementById('soundStatus') as HTMLButtonElement ;
-const audio:HTMLAudioElement = document.getElementById('soundPlayer') as HTMLAudioElement;
+const audio:HTMLAudioElement|null = document.getElementById('soundPlayer') as HTMLAudioElement;
+const gameBox:HTMLDivElement = document.getElementById('game') as HTMLDivElement;
 
 function mainLoop() {
 	requestAnimationFrame(() => {
@@ -34,7 +35,7 @@ function mainLoop() {
 
 function switchSound(){
 	if (!enableSound){
-		audio.play();
+		audio?.play();
 		updateText(soundStatus, 'off');
 		enableSound = true;
 		return;
@@ -45,13 +46,54 @@ function switchSound(){
 	enableSound = false;
 }
 
+export let maxWidth = 500;
+export let maxHeight = 1000;
+export let sizeCube = 50;
+
+function setupCanvasSize(){
+	if (canvas === null) {
+		return;
+	}
+
+	// setup size
+	maxWidth = Math.floor(canvas.clientWidth / 50) * 50;
+	maxHeight = Math.floor(canvas.clientHeight / 50) * 50;
+	if (maxHeight >= (maxWidth * 2)){
+		maxHeight = maxWidth * 2;
+	} else {
+		maxWidth = maxHeight / 2;
+	}
+
+
+	sizeCube = maxWidth / 10;
+
+	canvas.width = maxWidth;
+	canvas.height = maxHeight;
+
+	canvas.style.width = maxWidth + 'px';
+	canvas.style.height = maxHeight + 'px';
+
+
+	canvas?.addEventListener('click', (event)=>{
+		event.preventDefault();
+		rotateShape();
+	});
+}
+
+let positionXtouched = 0;
+let positionXaftertouched = 0;
+let timeoutDebounce:NodeJS.Timeout|null = null;
+
 export function init(canvasElement:HTMLCanvasElement, scoreElement:HTMLSpanElement){
 	canvas = canvasElement;
 	scoreUI = scoreElement;
 	ctx = canvas?.getContext('2d');
 
-	canvas.width = WIDTH_GRID * SIZE_GRID;
-	canvas.height = HEIGHT_GRID * SIZE_GRID;
+	if (audio !== null){
+		audio.volume = 0.1;
+	}
+
+	setupCanvasSize();
 
 	setup();
 	mainLoop();
@@ -97,6 +139,16 @@ btnSound?.addEventListener('click', ()=>{
 	btnSound.blur();
 });
 
+btnDown?.addEventListener('click', (event)=>{
+	event.preventDefault();
+	if (gameStatus !== GameStatus.Running){
+		return;
+	}
+
+	downFast();
+	btnDown.blur();
+});
+
 window.addEventListener('update', () => {
 	updateUI(ctx as CanvasRenderingContext2D, grid, currentShape, shadowShape);
 });
@@ -111,7 +163,7 @@ window.addEventListener('change_score', () => {
 
 window.addEventListener('game_over', () => {
 	if (enableSound) audio?.pause();
-	alert('Game over');
+	window.alert('Game over');
 
 	if (enableSound) audio?.play();
 	setup();
@@ -125,22 +177,71 @@ document.addEventListener('keydown', function(event) {
 	try {
 		switch (event.key) {
 		case 'ArrowLeft':
+			event.preventDefault();
 			moveLeft();
 			break;
 		case 'ArrowUp':
+			event.preventDefault();
 			rotateShape();
 			break;
 		case 'ArrowRight':
+			event.preventDefault();
 			moveRight();
 			break;
 		case 'ArrowDown':
+			event.preventDefault();
 			moveDown();
 			break;
 		case ' ':
+			event.preventDefault();
 			downFast();
 			break;
 		}
 	} catch (error) {
 		console.log(error);
 	}
+});
+
+
+gameBox?.addEventListener('touchmove', (event)=>{
+	if (gameStatus !== GameStatus.Running){
+		return;
+	}
+
+	event.preventDefault();
+	positionXtouched = Math.floor(event.changedTouches[0].clientX / sizeCube) - 1;
+
+	clearTimeout(timeoutDebounce as NodeJS.Timeout);
+
+	timeoutDebounce = setTimeout(()=>{
+		if (positionXaftertouched === 0){
+			positionXaftertouched = positionXtouched;
+			return;
+		}
+
+		if (positionXaftertouched === positionXtouched){
+			positionXaftertouched = positionXtouched;
+			return;
+		}
+
+		if (positionXaftertouched === positionXtouched){
+			positionXaftertouched = positionXtouched;
+			return;
+		}
+
+		if (positionXaftertouched >= positionXtouched){
+			positionXaftertouched = positionXtouched;
+			moveLeft();
+			return;
+		}
+
+		if (positionXaftertouched < positionXtouched){
+			positionXaftertouched = positionXtouched;
+			moveRight();
+			return;
+		}
+
+		positionXaftertouched = positionXtouched;
+	}, 1);
+
 });

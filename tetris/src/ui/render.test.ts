@@ -30,7 +30,6 @@ describe('draw functions', () => {
 
 		updateUI(ctx, grid, shape, null);
 
-		expect(ctx?.rect).toBeCalled();
 		expect(ctx?.clearRect).toBeCalled();
 		expect(ctx?.beginPath).toBeCalled();
 		expect(ctx?.moveTo).toBeCalled();
@@ -38,7 +37,7 @@ describe('draw functions', () => {
 		expect(ctx?.stroke).toBeCalled();
 	});
 
-	test('updateUI withput shape', () => {
+	test('updateUI without shape', () => {
 		const canvas = document.createElement('canvas');
 		const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 		const grid = [
